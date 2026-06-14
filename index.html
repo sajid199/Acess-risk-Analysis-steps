@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SAP GRC – Access Risk Analysis</title>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+
+  <!-- ===== HEADER ===== -->
+  <header class="site-header">
+    <div class="container">
+      <div class="header-badge">SAP GRC</div>
+      <h1>Access Risk Analysis (ARA)</h1>
+      <p class="subtitle">A complete step-by-step study guide — from concepts to configuration</p>
+      <nav class="toc-nav">
+        <a href="#section-intro">Introduction</a>
+        <a href="#section-risk-types">Risk Types</a>
+        <a href="#section-ruleset">Rule Set</a>
+        <a href="#section-sod-steps">SoD Steps</a>
+        <a href="#section-critical-risk">Critical Risk</a>
+        <a href="#section-analysis">Risk Analysis</a>
+        <a href="#section-interview">Interview Q&amp;A</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+
+    <!-- ===== 1. INTRODUCTION ===== -->
+    <section id="section-intro" class="card">
+      <div class="section-label">Section 1</div>
+      <h2>Introduction to Risk &amp; SAP GRC Evolution</h2>
+
+      <div class="info-grid">
+        <div class="info-box highlight-blue">
+          <h3>What is Risk?</h3>
+          <p>Something that impacts your business — either <strong>financially</strong> or <strong>reputationally</strong>.</p>
+          <ul>
+            <li><strong>Probability</strong> – Chances of occurrence (based on experience/knowledge)</li>
+            <li><strong>Risk is not universal</strong> – It varies by company and location</li>
+          </ul>
+          <div class="example-box">
+            <span class="label">Example</span>
+            Betting → 50% probability of losing
+          </div>
+        </div>
+        <div class="info-box highlight-green">
+          <h3>SAP GRC Tool Evolution</h3>
+          <div class="evolution-timeline">
+            <div class="evo-step">
+              <span class="evo-version">VIRSA 4.0</span>
+              <span class="evo-arrow">→</span>
+              <span class="evo-name">Compliance Calibrator (CC)</span>
+            </div>
+            <div class="evo-step">
+              <span class="evo-version">GRC AC 5.3</span>
+              <span class="evo-arrow">→</span>
+              <span class="evo-name">Risk Analysis &amp; Remediation (RAR)</span>
+            </div>
+            <div class="evo-step">
+              <span class="evo-version">GRC AC 10 / 10.1</span>
+              <span class="evo-arrow">→</span>
+              <span class="evo-name">Access Risk Analysis (ARA)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="concept-box">
+        <h3>Risk Management Framework</h3>
+        <div class="rm-grid">
+          <div class="rm-item red">
+            <div class="rm-icon">🔍</div>
+            <strong>Risk Identification</strong>
+            <p>Risk Analysis — Find what risks exist</p>
+          </div>
+          <div class="rm-item orange">
+            <div class="rm-icon">🛡️</div>
+            <strong>Risk Remediation</strong>
+            <p>Remove or Avoid — Eliminate the risk</p>
+          </div>
+          <div class="rm-item green">
+            <div class="rm-icon">⚡</div>
+            <strong>Risk Mitigation</strong>
+            <p>Reduce Impact — Lessen the damage</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 2. RISK TYPES ===== -->
+    <section id="section-risk-types" class="card">
+      <div class="section-label">Section 2</div>
+      <h2>Risk Types in SAP GRC ARA</h2>
+
+      <div class="note-box">
+        <strong>Key Concept:</strong> Action = T-Code &nbsp;|&nbsp; Permission = Authorization Values
+      </div>
+
+      <div class="risk-types-grid">
+
+        <div class="risk-card sod">
+          <div class="risk-header">
+            <span class="risk-badge">SoD</span>
+            <h3>Segregation of Duties Risk</h3>
+          </div>
+          <p>Combination of <strong>conflicting functions</strong>. Occurs when duties that should be separated are assigned to one user.</p>
+          <div class="example-box">
+            <span class="label">Examples</span>
+            <code>SU01 + PFCG</code> &nbsp; <code>SCC4 + STMS</code>
+          </div>
+          <div class="sub-info">
+            <strong>SoD Risk Levels (Action Level):</strong>
+            <ul>
+              <li>T1 Display + T2 Display</li>
+              <li>T1 Full + T2 Display</li>
+              <li>T1 Display + T2 Full</li>
+              <li class="highlight">T1 Full + T2 Full → <em>Highest Risk</em></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="risk-card critical-action">
+          <div class="risk-header">
+            <span class="risk-badge ca">CA</span>
+            <h3>Critical Action Risk</h3>
+          </div>
+          <p>A <strong>single transaction</strong> that is itself sensitive or dangerous.</p>
+          <div class="example-box">
+            <span class="label">Critical T-Codes</span>
+            <code>SCC4</code> <code>SCC5</code> <code>SE38</code> <code>SPRO</code> <code>STMS</code>
+          </div>
+        </div>
+
+        <div class="risk-card critical-perm">
+          <div class="risk-header">
+            <span class="risk-badge cp">CP</span>
+            <h3>Critical Permission Risk</h3>
+          </div>
+          <p>Sensitive <strong>authorization object + field + value</strong> combinations.</p>
+          <div class="example-box">
+            <span class="label">Examples</span>
+            <p><code>SCC4</code>: S_TABU_DIS with Activity 01 or 02</p>
+            <p><code>SE38</code>: S_DEVELOP with Activity 01 or 02</p>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="risk-levels">
+        <h3>Risk Levels (based on business impact)</h3>
+        <div class="levels-row">
+          <div class="level low">Low</div>
+          <div class="level medium">Medium</div>
+          <div class="level high">High</div>
+          <div class="level critical">Critical</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 3. GLOBAL RULE SET ===== -->
+    <section id="section-ruleset" class="card">
+      <div class="section-label">Section 3</div>
+      <h2>Global Rule Set &amp; Custom Rule Set</h2>
+
+      <div class="info-grid">
+        <div class="info-box">
+          <h3>What is the Global Rule Set?</h3>
+          <p>SAP studied famous companies worldwide across domains (Banking, Automobile, Retail, etc.) and documented risks faced over the last 100 years — divided by process (Finance, HR, Sales...).</p>
+          <div class="callout">
+            💡 This data is loaded via <strong>BC Sets related to RULESET activation</strong>.
+          </div>
+        </div>
+        <div class="info-box">
+          <h3>Global Rule Set Flow</h3>
+          <div class="flow-diagram">
+            <div class="flow-box">Your Business</div>
+            <div class="flow-arrow">↓ Risks identified in</div>
+            <div class="flow-box primary">Global Rule Set</div>
+            <div class="flow-arrow">↓ Customize for</div>
+            <div class="flow-box">Your Custom Rule Set</div>
+          </div>
+        </div>
+      </div>
+
+      <h3>Steps to Create a Custom Rule Set</h3>
+      <div class="steps-container">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Rule Set Creation</strong>
+            <code>NWBC → SET UP → Access Rule Maintenance → Rule Set</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Business Process Definition</strong>
+            <code>SPRO → GRC → Access Control → Maintain Business Process and Sub Processes</code>
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Function Creation</strong>
+            <code>NWBC → SET UP → Access Rule Maintenance → Functions</code>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 4. SOD RISK STEP-BY-STEP ===== -->
+    <section id="section-sod-steps" class="card">
+      <div class="section-label">Section 4</div>
+      <h2>Creating a SoD Risk — Step-by-Step</h2>
+
+      <div class="scenario-box">
+        <strong>Scenario:</strong> User <code>BENZ_USER1</code> has two roles — Security Admin (SU01, PFCG, PFUD) and Client Admin (SCC4, SCC5, SCC7, SCC1). This is a SoD violation because both conflicting duties are held by one person.
+      </div>
+
+      <!-- STEP 1 -->
+      <div class="numbered-step">
+        <div class="ns-header">
+          <span class="ns-num">Step 1</span>
+          <span class="ns-title">Sync Job — Repository Object Synchronization</span>
+        </div>
+        <p>After creating users and roles in the ECC system, run the sync job via SPRO:</p>
+        <code class="path">SPRO → GRC → Access Control → Sync Job → Repository Object Sync</code>
+
+        <div class="image-block">
+          <div class="img-label">Image 1 — Sync Job SPRO Configuration</div>
+          <img src="assets/images/img-01-sync-job-spro.png" alt="SPRO Sync Job – Repository Object Sync" loading="lazy" />
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 2 — SM37: Verify Sync Job Completion</div>
+          <p>Use T-Code <strong>SM37</strong> to check whether the sync job ran successfully.</p>
+          <img src="assets/images/img-02-sm37-sync-check.png" alt="SM37 – Sync Job Status Check" loading="lazy" />
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 3 — SLG1: Application Log for Errors</div>
+          <p>If anything failed, use T-Code <strong>SLG1</strong> to view detailed logs.</p>
+          <img src="assets/images/img-03-slg1-logs.png" alt="SLG1 – Application Log" loading="lazy" />
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 4 — Risk Table Overview</div>
+          <img src="assets/images/img-04-risk-table.png" alt="Risk Table" loading="lazy" />
+        </div>
+      </div>
+
+      <!-- STEP 2 -->
+      <div class="numbered-step">
+        <div class="ns-header">
+          <span class="ns-num">Step 2</span>
+          <span class="ns-title">Create a Business Process</span>
+        </div>
+        <p>A Business Process represents a business area (e.g., Basis, Finance, Sales).</p>
+        <div class="mini-table">
+          <div class="mt-row header"><span>Field</span><span>Value</span></div>
+          <div class="mt-row"><span>Business Process</span><span>BASIS</span></div>
+          <div class="mt-row"><span>ID</span><span>BS00</span></div>
+        </div>
+        <code class="path">SPRO → GRC → Access Control → Maintain Business Process and Sub Processes</code>
+      </div>
+
+      <!-- STEP 3 -->
+      <div class="numbered-step">
+        <div class="ns-header">
+          <span class="ns-num">Step 3</span>
+          <span class="ns-title">Create Functions (NWBC Setup)</span>
+        </div>
+        <p>Navigate to the Setup tab in NWBC to access Access Rule Maintenance.</p>
+
+        <div class="image-block">
+          <div class="img-label">Image 5 — NWBC Setup Tab</div>
+          <img src="assets/images/img-05-nwbc-setup-tab.png" alt="NWBC Setup Tab" loading="lazy" />
+        </div>
+
+        <div class="functions-grid">
+          <div class="func-card">
+            <h4>Function 1 — Security Administration</h4>
+            <div class="func-id">BENZ_SEC</div>
+            <table class="func-table">
+              <thead><tr><th>T-Code</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td>SU01</td><td>User Maintenance</td></tr>
+                <tr><td>PFCG</td><td>Role Maintenance</td></tr>
+                <tr><td>PFUD</td><td>User Master Comparison</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="func-card">
+            <h4>Function 2 — Client Administration</h4>
+            <div class="func-id">BENZ_CA</div>
+            <table class="func-table">
+              <thead><tr><th>T-Code</th><th>Description</th></tr></thead>
+              <tbody>
+                <tr><td>SCC4</td><td>Client Settings</td></tr>
+                <tr><td>SCC5</td><td>Client Copy</td></tr>
+                <tr><td>SCCL</td><td>Local Client Copy</td></tr>
+                <tr><td>SCC9</td><td>Remote Client Copy</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 6 — Creating New Function (Action Level)</div>
+          <img src="assets/images/img-06-function-action-level.png" alt="Creating Function – Action Level" loading="lazy" />
+        </div>
+
+        <div class="callout warning">
+          ⚠️ <strong>Important:</strong> Do NOT make changes to the Permission tab when working at Action level only. If you activate the permission tab, the system will start considering authorization objects (pulled from SU24), which changes the scope of risk analysis.
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 7 — Function Action Level (Continued)</div>
+          <img src="assets/images/img-07-function-action-level-2.png" alt="Function Action Level continued" loading="lazy" />
+        </div>
+      </div>
+
+      <!-- STEP 4 -->
+      <div class="numbered-step">
+        <div class="ns-header">
+          <span class="ns-num">Step 4</span>
+          <span class="ns-title">Create the Risk ID</span>
+        </div>
+        <p>After creating functions, navigate to <strong>Access Risk</strong> to create a Risk ID combining both functions.</p>
+        <code class="path">NWBC → Setup → Access Rule Maintenance → Access Risk</code>
+
+        <div class="risk-formula">
+          <span class="rf-id">BNZ_RSK1</span>
+          <span class="rf-eq">=</span>
+          <span class="rf-func">BENZ_SEC</span>
+          <span class="rf-plus">+</span>
+          <span class="rf-func">BENZ_CA</span>
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 8 — Risk ID Creation Screen</div>
+          <img src="assets/images/img-08-risk-id-create.png" alt="Risk ID Creation" loading="lazy" />
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 9 — Assigning Functions to Risk ID</div>
+          <img src="assets/images/img-09-function-assignment.png" alt="Function Assignment to Risk" loading="lazy" />
+        </div>
+
+        <div class="callout important">
+          🔑 <strong>Never forget:</strong> After creating a Risk ID, you must <strong>Generate</strong> it (select your Risk ID → Generate → Foreground or Background). <br/>
+          The number of Rule IDs generated equals the number of T-codes used in the function.
+        </div>
+      </div>
+
+      <!-- STEP 5 -->
+      <div class="numbered-step">
+        <div class="ns-header">
+          <span class="ns-num">Step 5</span>
+          <span class="ns-title">Run Risk Analysis</span>
+        </div>
+        <p>Navigate to Access Management → Access Risk Analysis → User Level to execute analysis.</p>
+        <code class="path">NWBC → Access Management → Access Risk Analysis → User Level</code>
+
+        <div class="image-block">
+          <div class="img-label">Image 10 — Risk Analysis User Level Form</div>
+          <img src="assets/images/img-10-risk-analysis-user-form.png" alt="Risk Analysis User Level Form" loading="lazy" />
+        </div>
+
+        <div class="image-block">
+          <div class="img-label">Image 11 — Risk Analysis Dashboard</div>
+          <img src="assets/images/img-11-risk-analysis-dashboard.png" alt="Risk Analysis Dashboard" loading="lazy" />
+        </div>
+      </div>
+
+      <!-- WHY THIS IS A RISK -->
+      <div class="why-risk-box">
+        <h3>Why Is This a Risk? (BENZ_USER1 Scenario)</h3>
+        <div class="why-grid">
+          <div>
+            <h4>Using SU01 — the user can:</h4>
+            <ul>
+              <li>Create / change users</li>
+              <li>Reset passwords</li>
+              <li>Assign powerful roles (e.g., SAP_ALL)</li>
+            </ul>
+          </div>
+          <div class="plus-divider">+</div>
+          <div>
+            <h4>Using SCC4 — the user can:</h4>
+            <ul>
+              <li>Change client settings</li>
+              <li>Modify protection levels</li>
+              <li>Change client control parameters</li>
+            </ul>
+          </div>
+          <div class="equals-divider">=</div>
+          <div class="result-risk">
+            <h4>⚠️ SoD Violation</h4>
+            <p>One person can create a powerful user, assign sensitive roles, change client settings, and bypass controls — all without anyone else's approval.</p>
+          </div>
+        </div>
+        <div class="grc-detects">
+          <strong>How GRC Detects It:</strong> GRC ARA checks — Does the user have access to BENZ_SEC <strong>AND</strong> BENZ_CA? If Yes → <span class="badge-risk">Risk Found: BNZ_RSK1</span>
+        </div>
+      </div>
+
+      <!-- SoD Permission Level detail -->
+      <div class="perm-level-box">
+        <h3>SoD Risk at Permission Level</h3>
+        <div class="perm-grid">
+          <div>
+            <h4>SU01 Permission Objects:</h4>
+            <ul>
+              <li>S_TCODE with TCD: <code>SU01</code></li>
+              <li>S_USER_GRP with Activity: <code>01</code> or <code>02</code></li>
+            </ul>
+          </div>
+          <div>
+            <h4>SCC4 Permission Objects:</h4>
+            <ul>
+              <li>S_TCODE with TCD: <code>SCC4</code></li>
+              <li>S_TABU_DIS with Activity: <code>01</code> or <code>02</code> &amp; Auth Group: <code>SS</code></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 5. CRITICAL RISK ===== -->
+    <section id="section-critical-risk" class="card">
+      <div class="section-label">Section 5</div>
+      <h2>Critical Risk Creation</h2>
+
+      <p class="intro-text">Critical risks require understanding <em>which business system</em> you're working with (BASIS, BW, SD, etc.) because critical risk needs only <strong>one function</strong>.</p>
+
+      <div class="info-grid">
+        <div class="info-box highlight-orange">
+          <h3>Critical Action Risk</h3>
+          <p>One function containing all critical T-Codes for the business process.</p>
+          <div class="mini-table">
+            <div class="mt-row header"><span>Function ID</span><span>T-Codes</span></div>
+            <div class="mt-row"><span>BMW_CAF</span><span>SCC5, SE38, SE93, SPRO, STMS</span></div>
+          </div>
+          <div class="risk-formula small">
+            <span class="rf-id">BMW_RSK2</span>
+            <span class="rf-eq">→</span>
+            <span class="rf-func">BMW_CAF</span>
+          </div>
+        </div>
+
+        <div class="info-box highlight-purple">
+          <h3>Critical Permission Risk</h3>
+          <p>One function containing critical authorization objects, fields, and values.</p>
+          <div class="mini-table">
+            <div class="mt-row header"><span>Function ID</span><span>Auth Values</span></div>
+            <div class="mt-row"><span>BENZ_CPF</span><span>S_TABU_CLI (Clientmaint: X)</span></div>
+            <div class="mt-row"><span></span><span>S_DEVELOP (Activity: 01 or 02)</span></div>
+          </div>
+          <div class="risk-formula small">
+            <span class="rf-id">BNZ_RSK3</span>
+            <span class="rf-eq">→</span>
+            <span class="rf-func">BENZ_CPF</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== 6. EXTRA IMAGE ===== -->
+    <section id="section-extra" class="card">
+      <div class="section-label">Reference</div>
+      <h2>Additional Reference Screenshot</h2>
+      <div class="image-block">
+        <div class="img-label">Image 12 — Additional Reference</div>
+        <img src="assets/images/img-12-extra.png" alt="Additional Reference Screenshot" loading="lazy" />
+      </div>
+    </section>
+
+    <!-- ===== 7. QUICK REFERENCE ===== -->
+    <section id="section-analysis" class="card">
+      <div class="section-label">Section 6</div>
+      <h2>Quick Reference — Paths &amp; T-Codes</h2>
+      <div class="ref-table-wrapper">
+        <table class="ref-table">
+          <thead>
+            <tr><th>Action</th><th>Path / T-Code</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Repository Object Sync</td><td><code>SPRO → GRC → Access Control → Sync Job</code></td></tr>
+            <tr><td>Check Sync Job Status</td><td><code>SM37</code></td></tr>
+            <tr><td>View Error Logs</td><td><code>SLG1</code></td></tr>
+            <tr><td>Create Rule Set</td><td><code>NWBC → Setup → Access Rule Maintenance → Rule Set</code></td></tr>
+            <tr><td>Business Process</td><td><code>SPRO → GRC → Access Control → Maintain Business Process</code></td></tr>
+            <tr><td>Create Function</td><td><code>NWBC → Setup → Access Rule Maintenance → Functions</code></td></tr>
+            <tr><td>Create Risk ID</td><td><code>NWBC → Setup → Access Rule Maintenance → Access Risk</code></td></tr>
+            <tr><td>Run Risk Analysis</td><td><code>NWBC → Access Management → Access Risk Analysis → User Level</code></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ===== 8. INTERVIEW Q&A ===== -->
+    <section id="section-interview" class="card">
+      <div class="section-label">Section 7</div>
+      <h2>Interview Questions &amp; Answers</h2>
+      <p class="intro-text">Common SAP GRC ARA interview questions with clear, interviewer-friendly explanations.</p>
+
+      <div class="qa-list">
+
+        <div class="qa-item">
+          <div class="qa-q">Q1. Are you using Global Rule Sets or Custom Rule Sets in your company?</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "In our company we use both. We started with the SAP Global Rule Set as a baseline — it covers standard risks across Finance, HR, and other processes based on industry best practices. However, every company has unique processes, so we created custom rule sets specific to our business. For example, we created custom Business Processes, Functions, and Risk IDs to match our internal T-code landscape. The combination of Global and Custom rule sets gives us comprehensive coverage."
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-q">Q2. Have you ever created a custom risk?</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "Yes. We created a custom SoD risk called BNZ_RSK1 which combines two functions — BENZ_SEC (Security Administration: SU01, PFCG, PFUD) and BENZ_CA (Client Administration: SCC4, SCC5, SCCL, SCC9). The reason is that if one person can both manage users and change client settings, they can create a backdoor user and bypass security controls. GRC ARA detects this by checking if a user has access to both functions simultaneously."
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-q">Q3. What is the difference between Action Level and Permission Level risk analysis?</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "Action Level analysis checks at the T-Code level — whether a user has the listed transactions. Permission Level goes deeper and checks authorization objects, fields, and values. For example, at action level we check if a user has both SU01 and SCC4. At permission level we verify the exact authorization objects like S_USER_GRP (Activity 01/02) and S_TABU_DIS (Activity 01/02, Auth Group SS). Permission level is more accurate but heavier on system resources."
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-q">Q4. What is an SoD Risk? Give a real example.</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "SoD stands for Segregation of Duties. A risk occurs when one person has access to two conflicting activities that together can be misused. For example, in our BASIS environment, the Security Admin role (SU01, PFCG) and the Client Admin role (SCC4, SCC5) should belong to different people. If one person has both, they could create an unauthorized superuser, assign SAP_ALL, and then change client protection — all without any oversight. This is a critical SoD violation."
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-q">Q5. What is the difference between Critical Action and Critical Permission risk?</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "Critical Action Risk is about a single dangerous T-Code — for example SCC4 (Change Client Settings) or SE38 (ABAP Editor) are powerful on their own, even without being combined. Critical Permission Risk is about dangerous authorization object/value combinations — for example S_DEVELOP with Activity 01 or 02 gives ABAP development access which is highly sensitive. Critical risks use one function (unlike SoD which uses two), because the risk exists in the single capability itself."
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-q">Q6. What T-codes do you use for monitoring in SAP GRC?</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "For monitoring sync jobs, I use <strong>SM37</strong> (Job Monitor) to check if background jobs ran successfully. If there are errors, I use <strong>SLG1</strong> (Application Log) to view detailed error logs and identify what failed during the sync. For GRC configuration I primarily work through NWBC (NetWeaver Business Client) and SPRO."
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-q">Q7. What happens if you forget to Generate the Risk ID after creating it?</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "If you don't generate the Risk ID, the risk rules are not activated in the system. GRC ARA will not detect any violations for that risk during analysis. You must always select the Risk ID and click Generate (Foreground for small sets, Background for large). The system generates individual Rule IDs — one for each T-code combination in the functions. Only after generation does the risk become active and detectable."
+          </div>
+        </div>
+
+        <div class="qa-item">
+          <div class="qa-q">Q8. How does GRC ARA identify an SoD violation?</div>
+          <div class="qa-a">
+            <strong>Answer:</strong> "GRC ARA compares user role assignments against the defined risk rules. For an SoD risk like BNZ_RSK1 = BENZ_SEC + BENZ_CA, GRC checks: Does this user have access to Function 1 (BENZ_SEC)? AND Does this user have access to Function 2 (BENZ_CA)? If both conditions are true, it flags a violation. The risk analysis can run at User, Role, Profile, or HR Object level depending on the scope needed."
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <p>SAP GRC Access Risk Analysis — Study Guide &nbsp;|&nbsp; Based on GRC AC 10 / 10.1 (ARA)</p>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
